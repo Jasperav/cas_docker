@@ -1,0 +1,24 @@
+# This file is generated, don't edit
+
+name: tests-cassandra
+
+on: push
+
+env:
+  CARGO_TERM_COLOR: always
+  TEST_CDRS_DB_KEYSPACE_KEY: test_keyspace_for_testing
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      cassandra:
+        image: cassandra
+        ports:
+          - 9042:9042
+        options: --health-cmd "cqlsh --debug" --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          ls
+          docker exec -i ${{ job.services.cassandra.id }} cqlsh -f setup.cql
